@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]>    <html class="no-js iem7"> <![endif]-->
+<!--[if (gt IEMobile 7)|!(IEMobile)]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <title>Site Blocked</title>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="cleartype" content="on">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap&subset=latin" rel="stylesheet">
+    <script>
+        function extractQueryParameters() {
+            var params={};
+            var queryStr=window.location.search;
+            if (queryStr) queryStr=queryStr.substring(1);
+            if (queryStr) {
+                var vars=queryStr.split('&');
+                for (var i=0;i < vars.length;i++) {
+                    var index=vars[i].indexOf('=');
+                    if (index > -1) {
+                        var name=vars[i].substring(0,index);
+                        var value=vars[i].substring(index+1);
+                        params[name]=value;
+                    }
+                }
+            }
+            return params;
+        }
+        function printArray(value) {
+            var arr=value.split(',');
+            if (arr.length==0) return "";
+            else if (arr.length==1) return arr[0];
+            else {
+                var ret="";
+                for (var i=0;i < arr.length;i++) {
+                    ret +=arr[i];
+                    if (i==arr.length - 2) ret +=" and ";
+                    else if (i!=arr.length - 1) ret +=", ";
+                }
+                return ret;
+            }
+        }
+        function sanitize(string) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#x27;',
+                "/": '&#x2F;',
+            };
+            return string.replace(/[&<>"'/]/ig, function(match) {
+                return map[match];
+            });
+        }
+        function decode(value) { return sanitize(window.atob(unescape(value))); }
+        function applyText() {
+            var t1=document.getElementById("T1");
+            var t2=document.getElementById("T2");
+            var params=extractQueryParameters();
+            if (params['classification']) t1.innerHTML="Site classification: "+printArray(decode(params['classification']))+".";
+            else t1.innerHTML="&nbsp;";
+            if (params['transactionId']) t2.innerHTML="Transaction Id: "+decode(params['transactionId'])+".";
+            else t2.innerHTML="&nbsp;";
+        }
+
+        window.addEventListener('load', applyText);
+    </script>
+    <style type="text/css">
+        html { position: relative; min-height: 100%; color: #000; }
+        a { color: #000; }
+        a:visited { color: #551a8b; }
+        a:hover { color: #06e; }
+        body {
+            height: 100%;
+            font-size:20px;
+            line-height: 1.4;
+            color:#000;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            width:100%;
+            min-height:100%;
+            background: #F9F9F9;
+            margin:0px;
+            margin-bottom:20px;
+            font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .banner {
+            background-color: #fff;
+            display:block;
+        }
+        .container {
+            background-color: #fff;
+            text-align:center;
+            overflow: hidden;
+            display: block !important;
+            max-width: 600px !important;
+            margin: 40px auto !important;
+            clear: both !important;
+        }
+        .content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+            padding: 20px;
+        }
+        .title {
+            margin-top: 0;
+            font-size:30px;
+            color:#000;
+            font-weight:700;
+        }
+        .footer {
+            font-size:13px; color:#999; text-align:center;margin: 30px 0;
+            padding: 20px;
+        }
+        img.logo { display:block; margin:30px auto 0px; max-width: 280px; max-height: 180px; vertical-align: middle; }
+        img.jamf-logo { display:block; padding:40px; margin-left: auto; margin-right: auto; }
+        .clearfix:before,.clearfix:after { content: ""; display: table; }
+        .clearfix:after { clear: both; }
+        .clearfix { *zoom: 1; }
+        @media only screen and (min-width: 800px) {
+            /* Style adjustments for viewports that meet the condition */
+        }
+        @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+        only screen and (min-resolution: 144dpi) {
+            /* Style adjustments for viewports that meet the condition */
+        }
+    </style>
+</head>
+<body>
+<div class="banner">
+    <img class="jamf-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIcAAAAuCAMAAAA1KvoeAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA8UExURUdwTD4/PXGFoXGGoT0+PFRaYUJERD0+PD4/PT4/PT0+PD0+PHGGoT0/PE1TWnKGoXKHoVplcz0+PHGFoNMwaNsAAAASdFJOUwCB873vETLeZE3LtOCYJZtnbWW02+oAAAKsSURBVFjD5ZjrcoMgEIUBuSPowPu/awGlYQ1oTWzsTE9+JCYgn8vuYSeIj6QokBBFZnSHxvAkdwdH+LMc5OMMXOIGx3Awy2HJLqXQ3vsGx3SAQb0XF4JY79scS72weZ5WwUVxmiYvw5B+4SDNNGUT6W1U5seXcYh4N63cM0dKUwaqeYTbGSfSy0oq3U2kD6SRphBjw4G4tddVtirBJY00ncIex6WSJdm2HMnWyWc5VJMDoTn8gXjEbRn2OVgUNENrsVQwZ3hUHCqtMVat86TR2mBVT5Wp+qyU8mkPGGJhn0OsGZ7TzFJfpKsVUPxaI7z+qHnxne+rysJ8LhnIMbrnbdnh4B7IMMDxvbKnHJlqnGpw1LVBsnUOJ+KR7y6M0WJ51HpQDobQy1tmonq5KvZjhUjXVIg4Mfr3vGiNFznB4ahRxVWAz2YuitNzyXV3RB6Zryzwj/YhMR81AjUHYjD1KeDg9e6VszGtTNkxx3SKo5Z5LJ05MMhHVQ9TxxzkNAdzjpWTWFUcrl6MggNbHnLM4RyHMksixjNHQo7Hyg6ksKpD1eWYTnFw8ahGu+GokijVNDhiDzkYOeTQjyUUsA9a3fNdjkY4+hy5EKiV3DmFBbCoNzka2bHDkTJfOFAVzXigcxxsHsIZDlZ5xPpDOx4/4XDDuIqEjnocCpRBdYa/wjGEQ+1xmE2P9zLH+AoHhT3uFfF4g4PR2qEREzdx5AqhJVGZOVEv9hWO0OPIAfGx1eNKro3Zb8ajy4E4rf3UVhy6z+G28cA/rJehy4Hco92jkr3IsfrHMA49Tek1uT5H6sNSr0d1bL0Yxrhki8S4ssnYkFf5LJXkve7/hCDHtiv7nBoc6D9zdPvTz8ptTpWblG0T38yAcbZNyu7fkmv/pXuHg8r7U5Rqg39lU74AJpJ7eAZPkFkAAAAASUVORK5CYII=" alt="Jamf logo">
+</div>
+<div class="container">
+    <img class="logo" src="https://alert.jamf.com/bbe4a0be-098b-4a02-94e2-0125c12880a6/images/BLOCK" alt="Site Blocked">
+    <div class="content">
+        <p class="title">Site Blocked</p>
+        <p>The site you are attempting to view has been blocked. For more information or assistance, please submit a support request via: https://support.bip-group.com</p>
+        <div id="T1"></div>
+    </div>
+</div>
+<div class="footer">
+    <footer>
+        <div id="T2"></div>
+    </footer>
+</div>
+</body>
+</html>

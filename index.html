@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cine Tracker timeline for cinema movies watched during the year.">
+    <title>Cine Tracker</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="page-toolbar">
+        <label class="theme-switch" for="themeToggle">
+            <span class="theme-switch-side-icon" aria-hidden="true">
+                <i class="ph ph-moon"></i>
+            </span>
+            <input id="themeToggle" class="theme-switch-input" type="checkbox" role="switch" aria-label="Toggle dark mode">
+            <span class="theme-switch-ui" aria-hidden="true">
+                <span class="theme-switch-knob"></span>
+            </span>
+            <span class="theme-switch-side-icon" aria-hidden="true">
+                <i class="ph ph-sun"></i>
+            </span>
+        </label>
+    </div>
+
+    <main class="page-shell">
+        <section class="timeline-section" aria-label="Cinema timeline">
+            <div class="timeline-hero">
+                <div class="section-heading">
+                    <div class="intro-layout">
+                        <div class="section-heading-main">
+                            <p class="eyebrow">Movie Tracker</p>
+                            <h2><span class="title-first-line">My Cinema Year</span><br><span class="title-second-line">at a Glance</span></h2>
+                            <p class="section-copy">I decided to do something radical this year: actually leave the house to watch a movie. Hover over a month to see what got me off the couch.</p>
+                        </div>
+                        <div class="intro-aside">
+                            <div class="hero-summary timeline-summary" id="goalSummary" aria-live="polite"></div>
+                            <a class="summary-cta" href="https://www.spaziocinema.info/cinema" target="_blank" rel="noreferrer">
+                                <span>Find a movie</span>
+                                <i class="ph ph-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-layout">
+                <div class="timeline-track-component">
+                    <div class="timeline-track-wrap" id="timelineTrackWrap">
+                        <div class="timeline-track" id="timelineTrack" role="list" aria-label="Movies watched by month"></div>
+                    </div>
+                    <aside class="preview-component preview-card is-hidden" id="previewCard" aria-live="polite">
+                        <div class="preview-layout">
+                            <div class="preview-poster-frame">
+                                <img id="previewPoster" class="preview-poster-image" src="" alt="" hidden>
+                                <div id="previewPosterFallback" class="preview-poster-fallback">
+                                    <span id="previewPosterMonogram">CT</span>
+                                </div>
+                            </div>
+                            <div class="preview-copy">
+                                <h3 id="previewTitle">Move across the timeline</h3>
+                                <p id="previewMonth" class="preview-month">December 2025</p>
+                                <dl class="preview-meta">
+                                    <div>
+                                        <dt>Director</dt>
+                                        <dd id="previewDirector">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Country</dt>
+                                        <dd id="previewCountry">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Watched at</dt>
+                                        <dd id="previewWatchedAt">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Rotten Tomatoes</dt>
+                                        <dd id="previewRating">-</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-component is-visually-hidden" aria-label="Goal dashboard">
+            <div class="dashboard-heading">
+                <p class="eyebrow">Goal dashboard</p>
+                <h3>Are you on track?</h3>
+            </div>
+            <div class="dashboard-grid">
+                <article class="stat-card accent-coral">
+                    <span class="stat-label">Movies watched</span>
+                    <strong class="stat-value" id="moviesWatched">0</strong>
+                    <span class="stat-note">Cinema entries on the timeline</span>
+                </article>
+                <article class="stat-card accent-cream">
+                    <span class="stat-label">Goal pace</span>
+                    <strong class="stat-value" id="goalPace">0%</strong>
+                    <span class="stat-note">Compared with one movie per month</span>
+                </article>
+                <article class="stat-card accent-mint">
+                    <span class="stat-label">Current streak</span>
+                    <strong class="stat-value" id="currentStreak">0 months</strong>
+                    <span class="stat-note">Consecutive months covered so far</span>
+                </article>
+                <article class="stat-card accent-ink">
+                    <span class="stat-label">Status</span>
+                    <strong class="stat-value" id="statusLabel">-</strong>
+                    <span class="stat-note" id="statusNote">Waiting for data</span>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
