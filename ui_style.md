@@ -1,6 +1,6 @@
-# UI Style Guide: Cine Tracker (Gumroad Inspired)
+# UI Style Guide: Cine Tracker
 
-This document outlines the Design Tokens, Component States, and Interactivity rules for the **Cine Tracker** project. The aesthetic is heavily inspired by **Gumroad**: neo-brutalist, high-contrast, playful yet highly functional, and extremely accessible.
+This document outlines the Design Tokens, Component States, and Interactivity rules for the **Cine Tracker** project. The aesthetic is neo-brutalist, high-contrast, playful yet highly functional, and extremely accessible.
 
 ## 🎨 Design Philosophy & Aesthetics
 
@@ -58,7 +58,7 @@ A strong sans-serif font ensures readability and fits the brutalist vibe.
 ```
 
 ### 3. Borders & Shadows
-This is the core of the Gumroad aesthetic: hard, unapologetic borders and unblurred shadows.
+This is the core of the visual language: hard, unapologetic borders and unblurred shadows.
 
 ```css
 :root {
@@ -73,6 +73,60 @@ This is the core of the Gumroad aesthetic: hard, unapologetic borders and unblur
   --shadow-hard-sm: 2px 2px 0px var(--color-border);
   --shadow-hard-md: 4px 4px 0px var(--color-border);
   --shadow-hard-lg: 8px 8px 0px var(--color-border);
+}
+```
+
+### 4. Light & Dark Mode Architecture
+
+#### Principles & Constraints
+- **Layout Consistency:** Switching themes affects **only** color, contrast, and visual emphasis. Spacing, typography sizing, and element dimensions remain strictly unchanged.
+- **Accent Integrity:** Shared accent colors retain their exact hex values across both themes.
+- **Semantic Usage:** Components must always consume functional theme tokens (e.g., `--color-bg-primary`) instead of hardcoded CSS values.
+
+---
+
+#### 1. Token Architecture & Implementation
+
+```css
+/* --------------------------------------------------
+1. Shared Accent Tokens (Theme Agnostic)
+   -------------------------------------------------- */
+:root {
+  --color-accent-pink: #FF90E8;
+  --color-accent-yellow: #FFF083;
+  --color-accent-blue: #90A8ED;
+  --color-accent-teal: #23A094;
+  --color-accent-red: #F24E1E;
+}
+
+/* --------------------------------------------------
+2. Light Theme (Default)
+   -------------------------------------------------- */
+:root {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F4F4F0;
+  --color-surface-muted: #EBE7DE;
+  --color-text-main: #000000;
+  --color-border: #06060659;
+  --color-tag-bg: #EAEAEA;
+  --color-tag-text: #302C2C;
+  --color-toggle-bg: var(--color-accent-pink);
+  --color-toggle-knob: #FFFFFF;
+}
+
+/* --------------------------------------------------
+3. Dark Theme
+   -------------------------------------------------- */
+body.theme-dark {
+  --color-bg-primary: #1b1b1b;
+  --color-bg-secondary: #302C2C;
+  --color-surface-muted: #2A2A2A;
+  --color-text-main: #F8F2E8;
+  --color-border: #DDDDDD59;
+  --color-tag-bg: #302C2C;
+  --color-tag-text: #FFFFFF;
+  --color-toggle-bg: #302C2C;
+  --color-toggle-knob: var(--color-accent-pink);
 }
 ```
 

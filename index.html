@@ -53,6 +53,7 @@
                     <div class="timeline-track-wrap" id="timelineTrackWrap">
                         <div class="timeline-track" id="timelineTrack" role="list" aria-label="Movies watched by month"></div>
                     </div>
+                    <div class="preview-backdrop is-hidden" id="previewBackdrop" aria-hidden="true"></div>
                     <aside class="preview-component preview-card is-hidden" id="previewCard" aria-live="polite">
                         <div class="preview-layout">
                             <div class="preview-poster-frame">
@@ -62,6 +63,9 @@
                                 </div>
                             </div>
                             <div class="preview-copy">
+                                <button class="preview-close" id="previewClose" type="button" aria-label="Close details">
+                                    <i class="ph ph-x"></i>
+                                </button>
                                 <h3 id="previewTitle">Move across the timeline</h3>
                                 <p id="previewMonth" class="preview-month">December 2025</p>
                                 <dl class="preview-meta">
@@ -74,7 +78,7 @@
                                         <dd id="previewCountry">-</dd>
                                     </div>
                                     <div>
-                                        <dt>Watched at</dt>
+                                        <dt>Screened at</dt>
                                         <dd id="previewWatchedAt">-</dd>
                                     </div>
                                     <div>

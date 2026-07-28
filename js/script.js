@@ -100,7 +100,9 @@ const state = {
     timelineMonths: [],
     isDragging: false,
     dragStartX: 0,
-    dragStartScrollLeft: 0
+    dragStartScrollLeft: 0,
+    touchStartX: 0,
+    touchStartY: 0
 };
 
 const dom = {};
@@ -115,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSummary(metrics);
     renderDashboard(metrics);
     renderTimeline(metrics.timelineMonths);
+    focusLatestTimelineState();
     setupPreviewVisibility();
     setupThemeToggle();
     setupTimelineDragging();
@@ -130,6 +133,8 @@ function cacheDomElements() {
     dom.timelineTrackWrap = document.getElementById("timelineTrackWrap");
     dom.timelineTrack = document.getElementById("timelineTrack");
     dom.previewCard = document.getElementById("previewCard");
+    dom.previewBackdrop = document.getElementById("previewBackdrop");
+    dom.previewClose = document.getElementById("previewClose");
     dom.previewTitle = document.getElementById("previewTitle");
     dom.previewMonth = document.getElementById("previewMonth");
     dom.previewDirector = document.getElementById("previewDirector");
@@ -225,6 +230,21 @@ function renderTimeline(timelineMonths) {
     hidePreviewCard();
 }
 
+function focusLatestTimelineState() {
+    if (!dom.timelineTrackWrap) {
+        return;
+    }
+
+    const scrollToLatest = () => {
+        dom.timelineTrackWrap.scrollLeft = dom.timelineTrackWrap.scrollWidth;
+    };
+
+    requestAnimationFrame(() => {
+        scrollToLatest();
+        requestAnimationFrame(scrollToLatest);
+    });
+}
+
 function createTimelineItem(entry, index) {
     const item = document.createElement("article");
     item.className = `timeline-item${entry.movie ? "" : " is-missed"}`;
@@ -267,7 +287,14 @@ function attachTimelineItemEvents(button, item, index) {
 
     button.addEventListener("mouseenter", handlePreviewInteraction);
     button.addEventListener("focus", handlePreviewInteraction);
-    button.addEventListener("click", handlePreviewInteraction);
+    button.addEventListener("click", (event) => {
+        if (!window.matchMedia("(hover: hover)").matches) {
+            return;
+        }
+
+        event.preventDefault();
+        handlePreviewInteraction();
+    });
 }
 
 function setActiveTimelineItem(index) {
@@ -302,7 +329,7 @@ function updatePreviewContent(entry) {
     dom.previewPoster.alt = "";
     dom.previewPoster.hidden = true;
     dom.previewPosterFallback.hidden = false;
-    dom.previewPosterFallback.style.background = movie?.posterAccent || "#f4f4f0";
+    dom.previewPosterFallback.style.background = movie?.posterAccent || "var(--color-surface-muted)";
     dom.previewPosterMonogram.textContent = createMonogram(movie?.title || entry.monthLabel);
 }
 
@@ -348,15 +375,31 @@ function createMonogram(value) {
 
 function setupPreviewVisibility() {
     dom.timelineTrackWrap.addEventListener("mouseleave", () => {
+        if (window.innerWidth <= 768) {
+            return;
+        }
         hidePreviewCard();
         clearActiveTimelineItems();
     });
 
     dom.timelineTrackWrap.addEventListener("focusout", (event) => {
+        if (window.innerWidth <= 768) {
+            return;
+        }
         if (!dom.timelineTrackWrap.contains(event.relatedTarget)) {
             hidePreviewCard();
             clearActiveTimelineItems();
         }
+    });
+
+    dom.previewBackdrop.addEventListener("click", () => {
+        hidePreviewCard();
+        clearActiveTimelineItems();
+    });
+
+    dom.previewClose.addEventListener("click", () => {
+        hidePreviewCard();
+        clearActiveTimelineItems();
     });
 }
 
@@ -372,14 +415,23 @@ function getTimelineItems() {
 
 function showPreviewCard() {
     dom.previewCard.classList.remove("is-hidden");
+    dom.previewBackdrop.classList.remove("is-hidden");
 }
 
 function hidePreviewCard() {
     dom.previewCard.classList.add("is-hidden");
+    dom.previewBackdrop.classList.add("is-hidden");
     dom.previewCard.classList.remove("is-flipped");
 }
 
 function positionPreviewCard(item) {
+    if (window.innerWidth <= 768) {
+        dom.previewCard.style.removeProperty("left");
+        dom.previewCard.style.removeProperty("top");
+        dom.previewCard.classList.remove("is-flipped");
+        return;
+    }
+
     const trackComponent = item.closest(".timeline-track-component");
     const cardRect = item.querySelector(".timeline-card").getBoundingClientRect();
     const componentRect = trackComponent.getBoundingClientRect();
@@ -390,19 +442,22 @@ function positionPreviewCard(item) {
     const viewportPadding = 24;
 
     let left = cardRect.right - componentRect.left + horizontalOffset;
-    const maxLeft = Math.min(componentRect.width - previewWidth - 12, window.innerWidth - previewWidth - viewportPadding - componentRect.left);
+    const maxLeft = Math.min(
+        componentRect.width - previewWidth - 12,
+        window.innerWidth - previewWidth - viewportPadding - componentRect.left
+    );
     if (left > maxLeft) {
         left = cardRect.left - componentRect.left - previewWidth - horizontalOffset;
     }
     left = Math.max(viewportPadding - componentRect.left, left);
 
-    const spaceBelow = window.innerHeight - cardRect.top - viewportPadding;
-    const spaceAbove = cardRect.bottom - viewportPadding;
+    const spaceBelow = window.innerHeight - cardRect.bottom - viewportPadding;
+    const spaceAbove = cardRect.top - viewportPadding;
     const shouldFlipUp = previewHeight > spaceBelow && spaceAbove > spaceBelow;
 
     let top;
     if (shouldFlipUp) {
-        const preferredViewportTop = cardRect.bottom - previewHeight + verticalOffset;
+        const preferredViewportTop = cardRect.top - previewHeight - verticalOffset;
         const clampedViewportTop = Math.max(
             viewportPadding,
             Math.min(preferredViewportTop, window.innerHeight - previewHeight - viewportPadding)
@@ -410,7 +465,7 @@ function positionPreviewCard(item) {
         top = clampedViewportTop - componentRect.top;
         dom.previewCard.classList.add("is-flipped");
     } else {
-        const preferredViewportTop = cardRect.top - verticalOffset;
+        const preferredViewportTop = cardRect.bottom + verticalOffset;
         const clampedViewportTop = Math.min(
             Math.max(viewportPadding, preferredViewportTop),
             Math.max(viewportPadding, window.innerHeight - previewHeight - viewportPadding)
@@ -429,7 +484,8 @@ function positionPreviewCard(item) {
 }
 
 function initializeTheme() {
-    document.body.classList.add("theme-dark");
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    document.body.classList.toggle("theme-dark", storedTheme === "dark");
 }
 
 function setupThemeToggle() {
@@ -442,6 +498,12 @@ function setupThemeToggle() {
     });
 }
 
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+        dom.previewBackdrop.classList.add("is-hidden");
+    }
+});
+
 function updateThemeToggleLabel() {
     const isDark = document.body.classList.contains("theme-dark");
     dom.themeToggle.checked = !isDark;
@@ -449,6 +511,7 @@ function updateThemeToggleLabel() {
 }
 
 function setupTimelineDragging() {
+    setupTimelineTouchDelegation();
     dom.timelineTrackWrap.addEventListener("pointerdown", handlePointerDown);
     dom.timelineTrackWrap.addEventListener("pointermove", handlePointerMove);
     dom.timelineTrackWrap.addEventListener("pointerup", handlePointerRelease);
@@ -460,7 +523,83 @@ function setupTimelineDragging() {
     });
 }
 
+function setupTimelineTouchDelegation() {
+    dom.timelineTrackWrap.addEventListener("touchstart", (event) => {
+        if (window.innerWidth > 768 || event.touches.length === 0) {
+            return;
+        }
+
+        state.touchStartX = event.touches[0].clientX;
+        state.touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    dom.timelineTrackWrap.addEventListener("touchend", (event) => {
+        if (window.innerWidth > 768 || event.changedTouches.length === 0) {
+            return;
+        }
+
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
+        const diffX = Math.abs(endX - state.touchStartX);
+        const diffY = Math.abs(endY - state.touchStartY);
+
+        if (diffX >= 10 || diffY >= 10) {
+            return;
+        }
+
+        const card = event.target.closest(".timeline-card");
+        if (!card) {
+            return;
+        }
+
+        const item = card.closest(".timeline-item");
+        if (!item || item.classList.contains("is-missed")) {
+            return;
+        }
+
+        const index = Number(item.dataset.index);
+        if (Number.isNaN(index)) {
+            return;
+        }
+
+        event.preventDefault();
+        console.log("Mobile Tap Detected:", card);
+        showPreviewCard();
+        setActiveTimelineItem(index);
+        positionPreviewCard(item);
+    }, { passive: false });
+
+    dom.timelineTrackWrap.addEventListener("click", (event) => {
+        if (!window.matchMedia("(hover: hover)").matches) {
+            return;
+        }
+
+        const card = event.target.closest(".timeline-card");
+        if (!card) {
+            return;
+        }
+
+        const item = card.closest(".timeline-item");
+        if (!item || item.classList.contains("is-missed")) {
+            return;
+        }
+
+        const index = Number(item.dataset.index);
+        if (Number.isNaN(index)) {
+            return;
+        }
+
+        showPreviewCard();
+        setActiveTimelineItem(index);
+        positionPreviewCard(item);
+    });
+}
+
 function handlePointerDown(event) {
+    if (window.innerWidth <= 768 && event.target.closest(".timeline-button")) {
+        return;
+    }
+
     state.isDragging = true;
     state.dragStartX = event.clientX;
     state.dragStartScrollLeft = dom.timelineTrackWrap.scrollLeft;
