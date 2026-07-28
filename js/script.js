@@ -107,6 +107,10 @@ const state = {
 
 const dom = {};
 
+function canUseDesktopHover() {
+    return window.innerWidth > 768;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     cacheDomElements();
     initializeTheme();
@@ -285,10 +289,32 @@ function attachTimelineItemEvents(button, item, index) {
         positionPreviewCard(item);
     };
 
-    button.addEventListener("mouseenter", handlePreviewInteraction);
-    button.addEventListener("focus", handlePreviewInteraction);
+    button.addEventListener("mouseenter", () => {
+        if (!canUseDesktopHover()) {
+            return;
+        }
+
+        handlePreviewInteraction();
+    });
+
+    button.addEventListener("pointerenter", (event) => {
+        if (!canUseDesktopHover() || event.pointerType !== "mouse") {
+            return;
+        }
+
+        handlePreviewInteraction();
+    });
+
+    button.addEventListener("focus", () => {
+        if (!canUseDesktopHover()) {
+            return;
+        }
+
+        handlePreviewInteraction();
+    });
+
     button.addEventListener("click", (event) => {
-        if (!window.matchMedia("(hover: hover)").matches) {
+        if (!canUseDesktopHover()) {
             return;
         }
 
@@ -375,7 +401,7 @@ function createMonogram(value) {
 
 function setupPreviewVisibility() {
     dom.timelineTrackWrap.addEventListener("mouseleave", () => {
-        if (window.innerWidth <= 768) {
+        if (!canUseDesktopHover()) {
             return;
         }
         hidePreviewCard();
@@ -383,7 +409,7 @@ function setupPreviewVisibility() {
     });
 
     dom.timelineTrackWrap.addEventListener("focusout", (event) => {
-        if (window.innerWidth <= 768) {
+        if (!canUseDesktopHover()) {
             return;
         }
         if (!dom.timelineTrackWrap.contains(event.relatedTarget)) {
@@ -415,7 +441,9 @@ function getTimelineItems() {
 
 function showPreviewCard() {
     dom.previewCard.classList.remove("is-hidden");
-    dom.previewBackdrop.classList.remove("is-hidden");
+    if (window.innerWidth <= 768) {
+        dom.previewBackdrop.classList.remove("is-hidden");
+    }
 }
 
 function hidePreviewCard() {
@@ -570,7 +598,7 @@ function setupTimelineTouchDelegation() {
     }, { passive: false });
 
     dom.timelineTrackWrap.addEventListener("click", (event) => {
-        if (!window.matchMedia("(hover: hover)").matches) {
+        if (!canUseDesktopHover()) {
             return;
         }
 

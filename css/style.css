@@ -49,13 +49,19 @@ body.theme-dark {
 }
 
 html {
-    height: 100%;
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
     scroll-behavior: smooth;
 }
 
 body {
-    height: 100vh;
-    overflow: hidden;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
     font-family: var(--font-family-base);
     color: var(--color-text-main);
     background: var(--color-bg-secondary);
@@ -151,9 +157,9 @@ select {
 }
 
 .page-shell {
-    height: calc(100vh - 5.25rem);
+    min-height: calc(100vh - 5.25rem);
     padding: 3.5rem 0 1.5rem;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .is-visually-hidden {
@@ -347,7 +353,7 @@ select {
     overflow-x: auto;
     overflow-y: auto;
     cursor: grab;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     scrollbar-width: thin;
     background: transparent;
 }
@@ -502,7 +508,7 @@ select {
     box-shadow: 8px 8px 0 var(--color-border);
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .timeline-button:hover .timeline-dot {
         transform: translate(-2px, -2px);
     }
